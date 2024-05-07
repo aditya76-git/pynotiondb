@@ -110,4 +110,4 @@ git clone https://github.com/aditya76-git/pynotiondb.git
 
 ## 💻Authors
 
-- Copyright © 2024 - [aditya76-git](https://github.com/aditya76-git) / [charusat-unofficial-api](https://github.com/aditya76-git/charusat-unofficial-api)
+- Copyright © 2024 - [aditya76-git](https://github.com/aditya76-git) / [pynotiondb](https://github.com/aditya76-git/pynotiondb)
