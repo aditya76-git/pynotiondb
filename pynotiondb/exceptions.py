@@ -1,0 +1,2 @@
+class NotionAPIError(Exception):
+    pass
