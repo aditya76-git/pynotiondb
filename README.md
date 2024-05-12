@@ -74,7 +74,7 @@ Before using this package, you'll need to set up a few things in your Notion wor
 ## 📷 Notion Database View
 
 <p align="center">
-    <img src="https://i.imgur.com/VQbD1ky.png" alt="Notion Database Web View">
+    <img src="https://i.imgur.com/NT580RY.png" alt="Notion Database Web View">
 </p>
 
 ## 🚀Initialization
@@ -91,7 +91,7 @@ mydb = NOTION_API("API_SECRET", "DATABASE_ID")
 To insert a single row into the table:
 
 ```python3
-sql = "INSERT INTO customers (name, address) VALUES (%s, %s)"
+sql = "INSERT INTO employees (name, address) VALUES (%s, %s)"
 val = ("John", "Highway 21")
 mydb.execute(sql, val)
 ```
@@ -101,7 +101,7 @@ mydb.execute(sql, val)
 To insert a single row into the table:
 
 ```python3
-sql = "INSERT INTO customers (name, address) VALUES (%s, %s)"
+sql = "INSERT INTO employees (name, address) VALUES (%s, %s)"
 val = [
     ("John", "Highway 21"),
     ("Lilly", "Road 99"),
@@ -117,11 +117,11 @@ mydb.execute(sql, val)
 To fetch data from the database with all columns and a default page size of 20:
 
 ```python3
-sql = "SELECT * FROM customers"
+sql = "SELECT * FROM employees"
 data = mydb.execute(sql)
 ```
 
-- This query retrieves all rows and columns from the customers table.
+- This query retrieves all rows and columns from the employees table.
 - The default page size is set to 20 rows.
 
 - Returned data includes all columns such as `name`, `address`, and `salary`.
@@ -151,12 +151,12 @@ data = mydb.execute(sql)
 To fetch data with specific columns:
 
 ```python3
-sql = "SELECT name, address FROM customers"
+sql = "SELECT name, address FROM employees"
 data = mydb.execute(sql)
 
 ```
 
-- This query retrieves only the `name` and `address` columns from the customers table.
+- This query retrieves only the `name` and `address` columns from the employees table.
 
 - The default page size is set to 20 rows.
 
@@ -183,16 +183,16 @@ data = mydb.execute(sql)
 To fetch data with specific columns:
 
 ```python3
-sql = "SELECT name, address FROM customers WHERE page_size = 1"
+sql = "SELECT name, address FROM employees WHERE page_size = 1"
 data = mydb.execute(sql)
 ```
 
 ```python3
-sql = "SELECT * FROM customers WHERE page_size = 1"
+sql = "SELECT * FROM employees WHERE page_size = 1"
 data = mydb.execute(sql)
 ```
 
-- This query retrieves only the `name` and `address` columns from the customers table.
+- This query retrieves only the `name` and `address` columns from the employees table.
 - Adding `*` will select all the colums
 
 - The page_size parameter allows customization of the number of rows returned per page.
@@ -216,12 +216,12 @@ data = mydb.execute(sql)
 To apply conditions for data retrieval, such as filtering based on numeric values:
 
 ```python3
-sql = "SELECT * FROM customers WHERE salary > 1000"
+sql = "SELECT * FROM employees WHERE salary > 1000"
 data = mydb.execute(sql)
 
 ```
 
-- This query retrieves all columns from the customers table where the `salary` is greater than 1000.
+- This query retrieves all columns from the employees table where the `salary` is greater than 1000.
 
 - Only numeric columns can be used for numerical comparisons.
 
@@ -252,12 +252,12 @@ data = mydb.execute(sql)
 To apply conditions for data retrieval, such as filtering based on numeric values:
 
 ```python3
-sql = "SELECT * FROM customers WHERE salary > 1000 AND name = 'John' and page_size = 10"
+sql = "SELECT * FROM employees WHERE salary > 1000 AND name = 'John' and page_size = 10"
 data = mydb.execute(sql)
 
 ```
 
-- This query retrieves all columns from the customers table where the `salary` is greater than 1000 and name which is John and page_size of 10.
+- This query retrieves all columns from the employees table where the `salary` is greater than 1000 and name which is John and page_size of 10.
 
 - Only numeric columns can be used for numerical comparisons.
 
@@ -290,8 +290,8 @@ data = mydb.execute(sql)
 To update a single row into the table:
 
 ```python3
-sql = "UPDATE customers SET salary = 20000 WHERE name = Rachel Adams"
-sql = "UPDATE customers SET salary = 20000 WHERE name = 'Rachel Adams'"
+sql = "UPDATE employees SET salary = 20000 WHERE name = Rachel Adams"
+sql = "UPDATE employees SET salary = 20000 WHERE name = 'Rachel Adams'"
 mydb.execute(sql)
 ```
 
@@ -305,7 +305,7 @@ mydb.execute(sql)
 To delete a single row into the table:
 
 ```python3
-sql = "DELETE FROM customers WHERE salary < 110"
+sql = "DELETE FROM employees WHERE salary < 110"
 mydb.execute(sql)
 ```
 
