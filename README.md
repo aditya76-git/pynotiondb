@@ -22,7 +22,14 @@ A Python wrapper for interacting with Notion databases using SQL-style syntax</h
 ## 📋Details
 
 - ➕ [Insert Statement](#insert)
+  - [Single-Row Insertion](#single-row-insertion)
+  - [Multiple-Row Insertion](#multiple-row-insertion)
 - 🔎 [Select Statement](#select)
+  - [Default Retrieval with All Columns](#default-retrieval-with-all-columns)
+  - [Retrieval with Specified Columns](#retrieval-with-specified-columns)
+  - [Retrieval with Specified Columns and Custom Page Size](#retrieval-with-specified-columns-and-custom-page-size)
+  - [Applying Conditions](#applying-conditions)
+  - [Applying Conditions (2)](#applying-conditions-2)
 
 ## ⚙️Installation
 
