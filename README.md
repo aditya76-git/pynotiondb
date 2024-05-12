@@ -56,9 +56,7 @@ To utilize this package, you'll initially need to create a database or table wit
 
 When adding a new table header in the database, ensure to select "Text" or Number from the Type dropdown menu. This selection ensures that the data is stored as text or as number, which is compatible with the package's functionality for retrieving rows. Avoid selecting any other options from the dropdown menu.
 
-Having a small database will have numbers so number operation can be done like `>` `<` etc
-
-As of now, the `pynotiondb` package only supports INSERT and SELECT statements. It does not offer functionalities to create tables or add table headers directly from the package itself. Therefore, users must manually create the tables with appropriate headers in Notion before using the package.
+As of now, the `pynotiondb` package only supports `INSERT` and `SELECT` statements. It does not offer functionalities to create tables or add table headers directly from the package itself. Therefore, users must manually create the tables with appropriate headers in Notion before using the package.
 
 Additional statements will be implemented in future updates of the package.
 
