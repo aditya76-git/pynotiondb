@@ -22,6 +22,7 @@ A Python wrapper for interacting with Notion databases using SQL-style syntax</h
 ## 📋Details
 
 - ➕ [Insert Statement](#insert)
+- 🔎 [Select Statement](#select)
 
 ## ⚙️Installation
 
@@ -94,7 +95,7 @@ mydb.execute(sql, val)
 
 ```
 
-## <a id="insert"></a>🔎 `SELECT` Statement
+## <a id="select"></a>🔎 `SELECT` Statement
 
 #### <a id="default-retrieval-with-all-columns"></a>➡️ Default Retrieval with All Columns
 
