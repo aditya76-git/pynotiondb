@@ -8,6 +8,7 @@ class NOTION_API:
     SEARCH = "https://api.notion.com/v1/search"
     PAGES = "https://api.notion.com/v1/pages"
     UPDATE_PAGE = "https://api.notion.com/v1/pages/{}"
+    DELETE_PAGE = "https://api.notion.com/v1/pages/{}"
     DATABASES = "https://api.notion.com/v1/databases/{}"
     QUERY_DATABASE = "https://api.notion.com/v1/databases/{}/query"
     DEFAULT_PAGE_SIZE_FOR_SELECT_STATEMENTS = 20
@@ -376,7 +377,21 @@ class NOTION_API:
 
             response = self.request_helper(url = self.UPDATE_PAGE.format(entry['id']), method = "PATCH", payload = payload)
 
-      
+    def delete(self, query):
+        parsed_data = MySQLQueryParser(query).parse()
+
+        select_statement_response = self.select("SELECT * from TEMP WHERE {}".format(parsed_data.get('where_clause')))      
+
+        if not len(select_statement_response['data']) >= 0:
+            raise ValueError("No Data Found")
+
+        for entry in select_statement_response['data']:
+
+            payload = {
+                'in_trash': True,
+            }
+
+            response = self.request_helper(url = self.DELETE_PAGE.format(entry['id']), method = "PATCH", payload = payload)
 
 
     def execute(self, sql, val = None):
@@ -406,6 +421,10 @@ class NOTION_API:
             elif to_do == "update":
 
                 self.update(query)
+
+            elif to_do == "delete":
+
+                self.delete(query)
 
             else:
                 raise ValueError(f"Unsupported operation")

@@ -7,6 +7,8 @@ class MySQLQueryParser:
     INSERT_PATTERN = r"INSERT INTO ([\w\s]+) \(([^)]+)\) VALUES \(([^)]+)\)"
     SELECT_PATTERN = r"SELECT\s+(?P<columns>[a-zA-Z\*,\s]+)\s+FROM\s+(?P<table>\w+)(?:\s+WHERE\s+(?P<conditions>.+))?"
     UPDATE_PATTERN = r"UPDATE\s+(\w+)\s+SET\s+(.*?)\s+WHERE\s+(.*)"
+    DELETE_PATTERN = r"DELETE\s+FROM\s+(\w+)\s+WHERE\s+(.*)"
+
 
     def __init__(self, statement):
         self.statement = statement
@@ -126,6 +128,20 @@ class MySQLQueryParser:
         }
         return output
 
+    def extract_delete_statement_info(self):
+        match = re.search(self.DELETE_PATTERN, self.statement)
+        
+        if not match:
+            return None
+
+        table_name = match.group(1)
+        where_clause = match.group(2)
+
+        return {
+            "table_name": table_name,
+            "where_clause": where_clause
+        }
+
 
     def extract_set_values(self, set_values_str):
         set_values = []
@@ -149,6 +165,9 @@ class MySQLQueryParser:
         if re.search(self.UPDATE_PATTERN, self.statement):
             return self.extract_update_statement_info()
 
+        if re.search(self.DELETE_PATTERN, self.statement):
+            return self.extract_delete_statement_info()
+
         raise ValueError("Invalid SQL statement")
 
     def check_statement(self):
@@ -161,5 +180,8 @@ class MySQLQueryParser:
 
         if re.search(self.UPDATE_PATTERN, self.statement):
             return True, "update"
+
+        if re.search(self.DELETE_PATTERN, self.statement):
+            return True, "delete"
 
         return False, "unknown"
