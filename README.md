@@ -13,8 +13,6 @@ A Python wrapper for interacting with Notion databases using SQL-style syntax</h
 
 <br />
 
-<!-- <img src="https://i.imgur.com/y3L6XfN.png" align="right" /> -->
-
 # pynotiondb
 
 `pynotiondb` is a Python package that provides a convenient way to interact with Notion databases using SQL-style syntax.
@@ -66,6 +64,12 @@ When adding a new table header in the database, ensure to select "Text" or Numbe
 As of now, the `pynotiondb` package only supports `INSERT` and `SELECT` statements. It does not offer functionalities to create tables or add table headers directly from the package itself. Therefore, users must manually create the tables with appropriate headers in Notion before using the package.
 
 Additional statements will be implemented in future updates of the package.
+
+## 📷 Notion Database View
+
+<p align="center">
+    <img src="[https://i.imgur.com/Vv7q65D.png](https://files.catbox.moe/41b2ng.png)" alt="Notion Database Web View">
+</p>
 
 ## 🚀Initialization
 
