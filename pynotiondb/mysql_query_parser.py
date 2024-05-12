@@ -6,6 +6,7 @@ class MySQLQueryParser:
 
     INSERT_PATTERN = r"INSERT INTO ([\w\s]+) \(([^)]+)\) VALUES \(([^)]+)\)"
     SELECT_PATTERN = r"SELECT\s+(?P<columns>[a-zA-Z\*,\s]+)\s+FROM\s+(?P<table>\w+)(?:\s+WHERE\s+(?P<conditions>.+))?"
+    UPDATE_PATTERN = r"UPDATE\s+(\w+)\s+SET\s+(.*?)\s+WHERE\s+(.*)"
 
     def __init__(self, statement):
         self.statement = statement
@@ -106,12 +107,47 @@ class MySQLQueryParser:
         
         raise ValueError("Invalid SQL statement")
 
+    def extract_update_statement_info(self):
+        match = re.search(self.UPDATE_PATTERN, self.statement)
+        
+        if not match:
+            return None
+
+        table_name = match.group(1)
+        set_values_str = match.group(2)
+        where_clause = match.group(3)
+
+        set_values = self.extract_set_values(set_values_str)
+
+        output = {
+            "table_name": table_name,
+            "set_values": set_values,
+            "where_clause": where_clause
+        }
+        return output
+
+
+    def extract_set_values(self, set_values_str):
+        set_values = []
+        pairs = set_values_str.split("AND")
+        for pair in pairs:
+            key_value = pair.split("=")
+            if len(key_value) != 2:
+                continue
+            key = key_value[0].strip()
+            value = key_value[1].strip().strip("'")
+            set_values.append({"key": key, "value": int(value) if value.isdigit() else value})
+        return set_values
+
     def parse(self):
         if re.match(self.INSERT_PATTERN, self.statement):
             return self.extract_insert_statement_info()
 
         if re.compile(self.SELECT_PATTERN, re.IGNORECASE).match(self.statement):
             return self.extract_select_statement_info()
+
+        if re.search(self.UPDATE_PATTERN, self.statement):
+            return self.extract_update_statement_info()
 
         raise ValueError("Invalid SQL statement")
 
@@ -122,5 +158,8 @@ class MySQLQueryParser:
 
         if re.compile(self.SELECT_PATTERN, re.IGNORECASE).match(self.statement):
             return True, "select"
+
+        if re.search(self.UPDATE_PATTERN, self.statement):
+            return True, "update"
 
         return False, "unknown"

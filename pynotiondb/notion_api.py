@@ -7,6 +7,7 @@ class NOTION_API:
 
     SEARCH = "https://api.notion.com/v1/search"
     PAGES = "https://api.notion.com/v1/pages"
+    UPDATE_PAGE = "https://api.notion.com/v1/pages/{}"
     DATABASES = "https://api.notion.com/v1/databases/{}"
     QUERY_DATABASE = "https://api.notion.com/v1/databases/{}/query"
     DEFAULT_PAGE_SIZE_FOR_SELECT_STATEMENTS = 20
@@ -165,7 +166,7 @@ class NOTION_API:
         return tuple(databases)
 
     @staticmethod
-    def __add_name_and_id_to_parsed_data(parsed_data, table_header):
+    def __add_name_and_id_to_parsed_data_for_insert_statements(parsed_data, table_header):
 
         for item in parsed_data['data']:
 
@@ -185,6 +186,33 @@ class NOTION_API:
                 condition['id'] = table_header[parameter]["id"]
         return parsed_data
 
+
+    @staticmethod
+    def __add_name_and_id_to_parsed_data_for_update_statements(parsed_data, table_header):
+        set_values = parsed_data.get('set_values', [])
+        updated_set_values = []
+
+        for set_value in set_values:
+            key = set_value.pop('key', None)
+
+            if key and key in table_header:
+                set_value.update({
+                    'property': key,  # Changing 'key' to 'property'
+                    'name': table_header[key]["name"],
+                    'id': table_header[key]["id"]
+                })
+
+            updated_set_values.append(set_value)
+
+       #Doing this so that using this we can later call construct payload function         
+        return {
+            "table_name": parsed_data.get('table_name'),
+            "data": updated_set_values,
+            "where_clause": parsed_data.get('where_clause')
+        }
+
+
+
     @staticmethod
     def __generate_query(sql, val = None):
 
@@ -203,7 +231,7 @@ class NOTION_API:
 
         parsed_data = MySQLQueryParser(query).parse()
 
-        parsed_data = self.__add_name_and_id_to_parsed_data(parsed_data, table_header)
+        parsed_data = self.__add_name_and_id_to_parsed_data_for_insert_statements(parsed_data, table_header)
 
         payload = self.construct_payload_for_pages_creation(parsed_data)
 
@@ -217,7 +245,7 @@ class NOTION_API:
             query = self.__generate_query(sql, row)
 
             parsed_data = MySQLQueryParser(query).parse()
-            parsed_data = self.__add_name_and_id_to_parsed_data(parsed_data, table_header)
+            parsed_data = self.__add_name_and_id_to_parsed_data_for_insert_statements(parsed_data, table_header)
             payload = self.construct_payload_for_pages_creation(parsed_data)
             response = self.request_helper(self.PAGES, method = "POST", payload = payload)
 
@@ -314,6 +342,9 @@ class NOTION_API:
 
 
                 single_dict[prop_name.lower()] = prop_value
+                single_dict["id"] = entry["id"]
+                single_dict["created_time"] = entry["created_time"]
+                single_dict["last_edited_time"] = entry["last_edited_time"]
 
             # Check if any of the properties in the single_dict is empty
             if any(value for value in single_dict.values()):
@@ -324,6 +355,28 @@ class NOTION_API:
 
         return results
 
+    def update(self, query):
+        table_header = self.get_table_header_info()
+
+        parsed_data = MySQLQueryParser(query).parse()
+
+        parsed_data = self.__add_name_and_id_to_parsed_data_for_update_statements(parsed_data, table_header)
+
+        select_statement_response = self.select("SELECT * from TEMP WHERE {}".format(parsed_data.get('where_clause')))
+
+        if not len(select_statement_response['data']) >= 0:
+            raise ValueError("No Data Found")
+
+        for entry in select_statement_response['data']:
+
+            payload = self.construct_payload_for_pages_creation(parsed_data)
+
+            #We don't want "parent" key in the payload
+            payload.pop('parent')
+
+            response = self.request_helper(url = self.UPDATE_PAGE.format(entry['id']), method = "PATCH", payload = payload)
+
+      
 
 
     def execute(self, sql, val = None):
@@ -349,6 +402,10 @@ class NOTION_API:
             elif to_do == "select":
               
                 return self.select(query)
+
+            elif to_do == "update":
+
+                self.update(query)
 
             else:
                 raise ValueError(f"Unsupported operation")
