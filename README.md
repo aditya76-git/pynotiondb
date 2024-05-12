@@ -53,9 +53,11 @@ Before using this package, you'll need to set up a few things in your Notion wor
 
 To utilize this package, you'll initially need to create a database or table within Notion. Customize the table headers to align with your requirements; for instance, if you're managing customer data, you'd include headers such as "Name" and "Address" as needed.
 
-When adding a new table header in the database, ensure to select "Text" from the Type dropdown menu. This selection ensures that the data is stored as text, which is compatible with the package's functionality for retrieving rows. Avoid selecting any other options from the dropdown menu.
+When adding a new table header in the database, ensure to select "Text" or Number from the Type dropdown menu. This selection ensures that the data is stored as text or as number, which is compatible with the package's functionality for retrieving rows. Avoid selecting any other options from the dropdown menu.
 
-As of now, the `pynotiondb` package only supports INSERT statements. It does not offer functionalities to create tables or add table headers directly from the package itself. Therefore, users must manually create the tables with appropriate headers in Notion before using the package.
+Having a small database will have numbers so number operation can be done like `>` `<` etc
+
+As of now, the `pynotiondb` package only supports INSERT and SELECT statements. It does not offer functionalities to create tables or add table headers directly from the package itself. Therefore, users must manually create the tables with appropriate headers in Notion before using the package.
 
 Additional statements will be implemented in future updates of the package.
 
@@ -66,9 +68,11 @@ from pynotiondb import NOTION_API
 mydb = NOTION_API("API_SECRET", "DATABASE_ID")
 ```
 
-## <a id="insert"></a>➡️ Insert Statement
+## <a id="insert"></a>➕ `INSERT` Statement
 
-To insert a new row to the table
+#### <a id="single-row-insertion"></a>➡️ Single-Row Insertion
+
+To insert a single row into the table:
 
 ```python3
 sql = "INSERT INTO customers (name, address) VALUES (%s, %s)"
@@ -76,17 +80,191 @@ val = ("John", "Highway 21")
 mydb.execute(sql, val)
 ```
 
-## <a id="insert"></a>➡️ Insert Statement v2
+#### <a id="multiple-row-insertion"></a>➡️ Multiple-Row Insertion
 
-To insert multiple rows to the table
+To insert a single row into the table:
 
 ```python3
 sql = "INSERT INTO customers (name, address) VALUES (%s, %s)"
 val = [
     ("John", "Highway 21"),
     ("Lilly", "Road 99"),
-    ]
+]
 mydb.execute(sql, val)
+
+```
+
+## <a id="insert"></a>🔎 `SELECT` Statement
+
+#### <a id="default-retrieval-with-all-columns"></a>➡️ Default Retrieval with All Columns
+
+To fetch data from the database with all columns and a default page size of 20:
+
+```python3
+sql = "SELECT * FROM customers"
+data = mydb.execute(sql)
+```
+
+- This query retrieves all rows and columns from the customers table.
+- The default page size is set to 20 rows.
+
+- Returned data includes all columns such as `name`, `address`, and `salary`.
+
+```json
+{
+  "data": [
+    {
+      "address": "Highway 21",
+      "salary": 1000,
+      "name": "John"
+    },
+    {
+      "address": "Highway 21",
+      "salary": 2000,
+      "name": "John"
+    }
+  ],
+  "next_cursor": null,
+  "previous_cursor": null,
+  "has_more": false
+}
+```
+
+#### <a id="retrieval-with-specified-columns"></a>➡️ Retrieval with Specified Columns
+
+To fetch data with specific columns:
+
+```python3
+sql = "SELECT name, address FROM customers"
+data = mydb.execute(sql)
+
+```
+
+- This query retrieves only the `name` and `address` columns from the customers table.
+
+- The default page size is set to 20 rows.
+
+```json
+{
+  "data": [
+    {
+      "address": "Highway 21",
+      "name": "John"
+    },
+    {
+      "address": "Highway 21",
+      "name": "John"
+    }
+  ],
+  "next_cursor": null,
+  "previous_cursor": null,
+  "has_more": false
+}
+```
+
+#### <a id="retrieval-with-specified-columns-and-custom-page-size"></a>➡️ Retrieval with Specified Columns and Custom Page Size
+
+To fetch data with specific columns:
+
+```python3
+sql = "SELECT name, address FROM customers WHERE page_size = 1"
+data = mydb.execute(sql)
+```
+
+```python3
+sql = "SELECT * FROM customers WHERE page_size = 1"
+data = mydb.execute(sql)
+```
+
+- This query retrieves only the `name` and `address` columns from the customers table.
+- Adding `*` will select all the colums
+
+- The page_size parameter allows customization of the number of rows returned per page.
+
+```json
+{
+  "data": [
+    {
+      "name": "John",
+      "address": "Highway 21"
+    }
+  ],
+  "next_cursor": "7184fff3-8859-45a1-863b-ab5c0d403a45",
+  "previous_cursor": null,
+  "has_more": true
+}
+```
+
+#### <a id="applying-conditions"></a>➡️ Applying Conditions
+
+To apply conditions for data retrieval, such as filtering based on numeric values:
+
+```python3
+sql = "SELECT * FROM customers WHERE salary > 1000"
+data = mydb.execute(sql)
+
+```
+
+- This query retrieves all columns from the customers table where the `salary` is greater than 1000.
+
+- Only numeric columns can be used for numerical comparisons.
+
+- Make sure the property you are applying conditions for has a Number type in the Notion Database
+
+```json
+{
+  "data": [
+    {
+      "address": "Highway 21",
+      "salary": 1291029102910219,
+      "name": "John"
+    },
+    {
+      "address": "Some Road",
+      "salary": 10000000,
+      "name": "Aditya"
+    }
+  ],
+  "next_cursor": null,
+  "previous_cursor": null,
+  "has_more": false
+}
+```
+
+#### <a id="applying-conditions-2"></a>➡️ Applying Conditions (2)
+
+To apply conditions for data retrieval, such as filtering based on numeric values:
+
+```python3
+sql = "SELECT * FROM customers WHERE salary > 1000 AND name = 'John' and page_size = 10"
+data = mydb.execute(sql)
+
+```
+
+- This query retrieves all columns from the customers table where the `salary` is greater than 1000 and name which is John and page_size of 10.
+
+- Only numeric columns can be used for numerical comparisons.
+
+- Make sure the property you are applying conditions for has a Number type in the Notion Database
+
+```json
+{
+  "data": [
+    {
+      "address": "Highway 21",
+      "salary": 1291029102910219,
+      "name": "John"
+    },
+    {
+      "address": "Some Road",
+      "salary": 10000000,
+      "name": "Aditya"
+    }
+  ],
+  "next_cursor": null,
+  "previous_cursor": null,
+  "has_more": false
+}
 ```
 
 ## 🌟 Show Your Support
