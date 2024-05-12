@@ -28,6 +28,8 @@ A Python wrapper for interacting with Notion databases using SQL-style syntax</h
   - [Retrieval with Specified Columns and Custom Page Size](#retrieval-with-specified-columns-and-custom-page-size)
   - [Applying Conditions](#applying-conditions)
   - [Applying Conditions (2)](#applying-conditions-2)
+- ⚡ [Update Statement](#update)
+  - [Updating a row](#updating-a-row)
 
 ## ⚙️Installation
 
@@ -278,6 +280,21 @@ data = mydb.execute(sql)
   "has_more": false
 }
 ```
+
+## <a id="update"></a>⚡ `UPDATE` Statement
+
+#### <a id="updating-a-row"></a>➡️ Updating a Row
+
+To update a single row into the table:
+
+```python3
+sql = "UPDATE customers SET salary = 20000 WHERE name = Rachel Adams"
+sql = "UPDATE customers SET salary = 20000 WHERE name = 'Rachel Adams'"
+mydb.execute(sql)
+```
+
+- This query will update the salary to 20000 for the row with the name 'Rachel Adams'.
+- Using single quotes around the name is recommended, especially if the value contains spaces or special characters.
 
 ## 🌟 Show Your Support
 
