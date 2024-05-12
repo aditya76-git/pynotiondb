@@ -68,7 +68,7 @@ Additional statements will be implemented in future updates of the package.
 ## 📷 Notion Database View
 
 <p align="center">
-    <img src="https://i.imgur.com/AdYibiz.png" alt="Notion Database Web View">
+    <img src="https://i.imgur.com/VQbD1ky.png" alt="Notion Database Web View">
 </p>
 
 ## 🚀Initialization
