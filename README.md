@@ -30,6 +30,8 @@ A Python wrapper for interacting with Notion databases using SQL-style syntax</h
   - [Applying Conditions (2)](#applying-conditions-2)
 - ⚡ [Update Statement](#update)
   - [Updating a row](#updating-a-row)
+- ⚡ [Delete Statement](#delete)
+  - [Deleting a row](#single-row-deletion)
 
 ## ⚙️Installation
 
@@ -295,6 +297,17 @@ mydb.execute(sql)
 
 - This query will update the salary to 20000 for the row with the name 'Rachel Adams'.
 - Using single quotes around the name is recommended, especially if the value contains spaces or special characters.
+
+## <a id="delete"></a>➕ `DELETE` Statement
+
+#### <a id="single-row-deletion"></a>➡️ Single-Row Deletion
+
+To delete a single row into the table:
+
+```python3
+sql = "DELETE FROM customers WHERE salary < 110"
+mydb.execute(sql)
+```
 
 ## 🌟 Show Your Support
 
