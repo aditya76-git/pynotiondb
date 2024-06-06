@@ -81,11 +81,18 @@ class MySQLQueryParser:
                         i += 1
                     else:
                         try:
-                            key, operator, value = re.split(
-                                r"\s*(=|==|<=|>=|LIKE|>|<)\s*", conditions_list[i]
-                            )
+                            for condition in conditions_list:
+                                operator_pattern = re.compile(r'==|<=|>=|LIKE|>|<|=')
+                                operator_match = operator_pattern.search(condition)
+                                if operator_match:
+                                    operator = operator_match.group(0)
+                                    key, value = condition.split(operator, 1)
+
+                                else:
+                                    raise Exception("Enable to parse")
                         except Exception:
                             raise Exception("The operator you are trying to use has not been implemented yet")
+                            
                         key = key.strip()
                         operator = operator.strip()
                         value = value.strip().strip("'")
