@@ -146,16 +146,35 @@ class MySQLQueryParser:
 
     def extract_set_values(self, set_values_str):
         set_values = []
-        pairs = set_values_str.split("AND")
+        # Split by 'AND', but not within quotes
+        pairs = re.findall(r'(?:[^\'AND]+|\'[^\']*\')+', set_values_str)
         for pair in pairs:
-            key_value = pair.split("=")
-            if len(key_value) != 2:
+            pair = pair.strip()
+            if not pair:
                 continue
-            key = key_value[0].strip()
-            value = key_value[1].strip().strip("'")
-            set_values.append(
-                {"key": key, "value": int(value) if value.isdigit() else value}
-            )
+            # Find the position of the first '=' outside quotes
+            eq_pos = -1
+            in_quote = False
+            for i, char in enumerate(pair):
+                if char == "'":
+                    in_quote = not in_quote
+                elif char == '=' and not in_quote:
+                    eq_pos = i
+                    break
+            
+            if eq_pos == -1:
+                continue
+
+            key = pair[:eq_pos].strip()
+            value = pair[eq_pos+1:].strip().strip("'")
+            
+            # Handle numeric values
+            if value.isdigit():
+                value = int(value)
+            elif value.replace('.', '', 1).isdigit():
+                value = float(value)
+            
+            set_values.append({"key": key, "value": value})
         return set_values
 
     def parse(self):
